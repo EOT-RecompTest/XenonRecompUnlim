@@ -5,48 +5,32 @@ XenonRecompUnlimited - it's special fork of XenonRecomp for TDU engine, like exp
  
 Some  new commands of PowerPC CPU checked, but other experimental
 
-### Simplified step-by-step Instructions
-**I think default recompiler instruction too hard, because there a lot of text, that can be explained easier and a lot of not primary information, but less "obviously instructions(for some people it can be not obviously)" **
-**Due to hard instructions a lot of enthusiasts can't GET TO THE MOST INTERESTING THINGS**
+### Quick Start
 
-1)Install git 
-https://git-scm.com/downloads/win
+These instructions describe how to build XenonRecompUnlimited on Windows using Visual Studio 2022.
 
-2)open cmd(terminal) in directory and write: git clone --recursive https://github.com/testdriveupgrade/XenonRecompUnlimited.git
+1. **Install dependencies**
+   - [Git](https://git-scm.com/downloads/win)
+   - [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) with the "Desktop development with C++" workload and the `clang-cl` component
+   - [CMake 3.20 or later](https://cmake.org/download/)
 
+2. **Clone the repository**
 
-3)install clang-cl in Visual Studio installer (or install clang-llvm)
-(install if you dont have VS  https://visualstudio.microsoft.com/vs/ )
+   ```cmd
+   git clone --recursive https://github.com/testdriveupgrade/XenonRecompUnlimited.git
+   ```
 
-4)install CMAKE newer or 3.20
-https://cmake.org/download/
+3. **Configure the project**
+   - Open the repository folder in Visual Studio.
+   - Select `ClangCL` as the toolchain and `x64` as the target architecture.
+   - Click **Configure** and then **Build**.
 
-(create folder build in output) directory
+4. **Run the tools**
+   - Press **Run** (the green triangle) in Visual Studio. This builds and launches `XenonAnalyse` and `XenonRecomp`.
 
-5)press "configure"
-
-target Visual Studio 2022
-
-(don't select x86, it should be x64(as default))
-the parameter of CMAKE write: ClangCL
-
-then "build"
-
-and after "open"
-
-6)After that in Visual Studio press "Run - green triangle"
-
-Then you get exe files of Xenon Analyse and Recomp
-
-7)file works
-
-You should convert your .iso dump to .xex file (recomment to choose GUI)
-https://github.com/wiredopposite/XGDTool/releases/tag/v1.0.0
-(and there select input(folder with .iso)/output(target folder) and choose "Extract"), you will get semi-unpacked game with .xex
-
-(I think integrated XenonR patcher works not good) use xextool to uncompress and unecrypt the .xex file
-https://digiex.net/threads/xextool-6-3-download.9523/
-(IT'S VERY IMPORTANT TO WRITE DIRECTORY PATH IN SPECIFIC WAY better to use these format example:  )
+5. **Prepare a game XEX**
+   - Extract the game ISO using the [XGDTool](https://github.com/wiredopposite/XGDTool/releases/tag/v1.0.0) GUI.
+   - Decompress and decrypt the XEX with [xextool](https://digiex.net/threads/xextool-6-3-download.9523/).
 
 ## About XenonAnalyser
 
