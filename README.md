@@ -21,12 +21,16 @@ These instructions describe how to build XenonRecompUnlimited on Windows using V
    ```
 
 3. **Configure the project**
-   - Open the repository folder in Visual Studio.
-   - Select `ClangCL` as the toolchain and `x64` as the target architecture.
-   - Click **Configure** and then **Build**.
+   - Open the repository folder in CMake-GUI as a Source Repository
+   - Create a build folder in the repository, and select that as the build folder in CMake-GUI
+   - Click **Configure**
+   - Select `ClangCL` as the toolchain and `x64` as the target architecture
+   - Go through the configuration and once complete, Click **Build**
 
-4. **Run the tools**
-   - Press **Run** (the green triangle) in Visual Studio. This builds and launches `XenonAnalyse` and `XenonRecomp`.
+4. **Run Visual Studio**
+   - Press the generated sln file in your build folder
+   - Click **Build** >> **Build All** (Heading bar) in Visual Studio
+   - This builds `XenonAnalyse` and `XenonRecomp` executables in build/Xenon_____/Release folders
 
 5. **Prepare a game XEX**
    - Extract the game ISO using the [XGDTool](https://github.com/wiredopposite/XGDTool/releases/tag/v1.0.0) GUI.
