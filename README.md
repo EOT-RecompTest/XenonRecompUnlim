@@ -1,5 +1,5 @@
 # XenonRecompUnlimited
-XenonRecompUnlimited - it's special fork of XenonRecomp for TDU engine, like experimental fork-version with fresh updates
+XenonRecompUnlimited - it's special fork of XenonRecomp for EOT, like experimental fork-version with fresh updates
 
 (unfortunattely at this moment XenonRecomp updates long-term )
  
