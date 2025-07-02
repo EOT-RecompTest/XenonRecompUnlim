@@ -694,14 +694,6 @@ bool Recompiler::Recompile(
         println("\tif ({}.u32 != 0 && !{}.eq) goto loc_{:X};", ctr(), cr(insn.operands[0] / 4), insn.operands[1]);
         break;
 
-    case PPC_INST_BDNZT:
-    {
-        constexpr std::string_view fields[] = { "lt", "gt", "eq", "so" };
-        println("\t--{}.u64;", ctr());
-        println("\tif ({}.u32 != 0 && {}.{}) goto loc_{:X};", ctr(), cr(insn.operands[0] / 4), fields[insn.operands[0] % 4], insn.operands[1]);
-        break;
-    }
-
     case PPC_INST_BEQ:
         printConditionalBranch(false, "eq");
         break;
@@ -2099,8 +2091,8 @@ bool Recompiler::Recompile(
 
     case PPC_INST_VNOR:
     case PPC_INST_VNOR128:
-        println("\t_mm_store_si128((__m128i*){}.u8, _mm_xor_si128(_mm_or_si128(_mm_load_si128((__m128i*){}.u8), _mm_load_si128((__m128i*){}.u8)), _mm_set1_epi32(-1)));",Add commentMore actions
-            v(insn.operands[0]), v(insn.operands[1]), v(insn.operands[2]));
+        println("\t_mm_store_si128((__m128i*){}.u8, _mm_xor_si128(_mm_or_si128(_mm_load_si128((__m128i*){}.u8), _mm_load_si128((__m128i*){}.u8)), _mm_set1_epi32(-1)));");
+            v(insn.operands[0]), v(insn.operands[1]), v(insn.operands[2]);
         break;
 
     case PPC_INST_VOR:
