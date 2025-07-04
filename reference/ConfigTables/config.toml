@@ -1,0 +1,35 @@
+[main]
+file_path = "../private/default.xex"
+out_directory_path = "../ppc"
+switch_table_file_path = "EOTJumpTable.toml"
+
+skip_lr = false
+skip_msr = false
+ctr_as_local = false
+xer_as_local = false
+reserved_as_local = false
+cr_as_local = false
+non_argument_as_local = false
+non_volatile_as_local = false
+
+restgprlr_14_address = 0x8233E600
+savegprlr_14_address = 0x8233E5B0
+restfpr_14_address = 0x8233FBCC
+savefpr_14_address = 0x8233FB80
+restvmx_14_address = 0x8233F8E8
+savevmx_14_address = 0x8233F650
+restvmx_64_address = 0x8233F97C
+savevmx_64_address = 0x8233F6E4
+
+functions = [
+    { address = 0x82115F30, size = 0x7C },
+    { address = 0x821BEB10, size = 0x34 },
+    { address = 0x821C08A8, size = 0x20 },
+    { address = 0x821C0940, size = 0x20 },
+    { address = 0x821C09E0, size = 0x3C },
+    { address = 0x8233A0E0, size = 0x30 },
+    { address = 0x8235DF88, size = 0x134 },
+    { address = 0x82369110, size = 0x174 },
+    { address = 0x82375C78, size = 0xCC },
+    { address = 0x823784D8, size = 0xEC }
+]
