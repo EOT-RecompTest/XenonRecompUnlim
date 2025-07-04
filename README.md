@@ -17,7 +17,7 @@ These instructions describe how to build XenonRecompUnlimited on Windows using V
 2. **Clone the repository**
 
    ```cmd
-   git clone --recursive [https://github.com/testdriveupgrade/XenonRecompUnlimited.git](https://github.com/EOT-RecompTest/XenonRecomp.git)
+   git clone --recursive https://github.com/EOT-RecompTest/XenonRecomp.git
    ```
 
 3. **Configure the project**
