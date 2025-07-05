@@ -40,9 +40,13 @@ These instructions describe how to build XenonRecompUnlimited on Windows using V
    - This builds `XenonAnalyse` and `XenonRecomp` executables in the build directories
 
 6. **Analyze and recompile**
-   - Run `XenonAnalyse default_patched.xex switch_tables.toml` to generate jump table definitions.
-   - Run `XenonRecomp config.toml XenonUtils/ppc_context.h` to produce C++ output.
-
+      ```bash
+   XenonAnalyse default_patched.xex switch_tables.toml
+   ```
+    ```bash
+   XenonRecomp config.toml XenonUtils/ppc_context.h
+   ```
+   
 ### Quick Start on macOS
 
 1. **Install dependencies**
