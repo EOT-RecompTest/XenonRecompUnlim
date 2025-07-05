@@ -20,7 +20,9 @@
 #else
 #  define SIMDE_ENABLE_NATIVE_ALIASES
 #  include <simde/x86/xmmintrin.h>
-#  include <simde/x86/smmintrin.h>
+#  include <simde/x86/sse2.h>
+#  include <simde/x86/ssse3.h>
+#  include <simde/x86/sse4.1.h>
 #endif
 
 #define PPC_JOIN(x, y) x##y
