@@ -5,6 +5,7 @@
 #include <image.h>
 #include <xbox.h>
 #include <fmt/core.h>
+#include <algorithm>
 #include "function.h"
 
 #define SWITCH_ABSOLUTE 0
@@ -20,6 +21,65 @@ struct SwitchTable
     uint32_t r{};
     uint32_t type{};
 };
+
+static const uint8_t RESTGPRLR_14[] = { 0xe9, 0xc1, 0xff, 0x68 };
+static const uint8_t SAVEGPRLR_14[] = { 0xf9, 0xc1, 0xff, 0x68 };
+static const uint8_t RESTFPR_14[] = { 0xc9, 0xcc, 0xff, 0x70 };
+static const uint8_t SAVEFPR_14[] = { 0xd9, 0xcc, 0xff, 0x70 };
+static const uint8_t RESTVMX_14[] = { 0x39, 0x60, 0xfe, 0xe0, 0x7d, 0xcb, 0x60, 0xce };
+static const uint8_t SAVEVMX_14[] = { 0x39, 0x60, 0xfe, 0xe0, 0x7d, 0xcb, 0x61, 0xce };
+static const uint8_t RESTVMX_64[] = { 0x39, 0x60, 0xfc, 0x00, 0x10, 0x0b, 0x60, 0xcb };
+static const uint8_t SAVEVMX_64[] = { 0x39, 0x60, 0xfc, 0x00, 0x10, 0x0b, 0x61, 0xcb };
+
+uint32_t BytePatternSearch(uint8_t* data, const uint32_t dataSize,
+                           const uint32_t baseAddress, const uint8_t pattern[],
+                           const size_t patternSize)
+{
+    auto result = std::search(data, data + dataSize, pattern, pattern + patternSize);
+    if (result != data + dataSize)
+    {
+        return baseAddress + std::distance(data, result);
+    }
+
+    return UINT32_MAX;
+}
+
+void RegisterFunctionsSearch(Image& image)
+{
+    uint32_t baseAddress = UINT32_MAX;
+
+    for (const auto& section : image.sections)
+    {
+        if (section.name == ".text")
+        {
+            baseAddress = section.base;
+
+            if (baseAddress == UINT32_MAX)
+            {
+                fmt::println("Could not find \".text\" section.");
+                return;
+            }
+
+            uint32_t restgprlr_14 = BytePatternSearch(section.data, section.size, baseAddress, RESTGPRLR_14, sizeof(RESTGPRLR_14));
+            uint32_t savegprlr_14 = BytePatternSearch(section.data, section.size, baseAddress, SAVEGPRLR_14, sizeof(SAVEGPRLR_14));
+            uint32_t restfpr_14 = BytePatternSearch(section.data, section.size, baseAddress, RESTFPR_14, sizeof(RESTFPR_14));
+            uint32_t savefpr_14 = BytePatternSearch(section.data, section.size, baseAddress, SAVEFPR_14, sizeof(SAVEFPR_14));
+            uint32_t restvmx_14 = BytePatternSearch(section.data, section.size, baseAddress, RESTVMX_14, sizeof(RESTVMX_14));
+            uint32_t savevmx_14 = BytePatternSearch(section.data, section.size, baseAddress, SAVEVMX_14, sizeof(SAVEVMX_14));
+            uint32_t restvmx_64 = BytePatternSearch(section.data, section.size, baseAddress, RESTVMX_64, sizeof(RESTVMX_64));
+            uint32_t savevmx_64 = BytePatternSearch(section.data, section.size, baseAddress, SAVEVMX_64, sizeof(SAVEVMX_64));
+
+            fmt::println("restgprlr_14_address = 0x{:X}", restgprlr_14);
+            fmt::println("savegprlr_14_address = 0x{:X}", savegprlr_14);
+            fmt::println("restfpr_14_address = 0x{:X}", restfpr_14);
+            fmt::println("savefpr_14_address = 0x{:X}", savefpr_14);
+            fmt::println("restvmx_14_address = 0x{:X}", restvmx_14);
+            fmt::println("savevmx_14_address = 0x{:X}", savevmx_14);
+            fmt::println("restvmx_64_address = 0x{:X}", restvmx_64);
+            fmt::println("savevmx_64_address = 0x{:X}", savevmx_64);
+        }
+    }
+}
 
 void ReadTable(Image& image, SwitchTable& table)
 {
@@ -114,10 +174,15 @@ void ScanTable(const uint32_t* code, size_t base, SwitchTable& table)
         }
 
         // Handle conditional branches
-        if (cr == -1 && (insn.opcode->id == PPC_INST_BGT ||
-            insn.opcode->id == PPC_INST_BGTLR ||
-            insn.opcode->id == PPC_INST_BLE ||
-            insn.opcode->id == PPC_INST_BLELR))
+        if (cr == (uint32_t)-1 &&
+            (insn.opcode->id == PPC_INST_BGT ||
+             insn.opcode->id == PPC_INST_BGTLR ||
+             insn.opcode->id == PPC_INST_BLE ||
+             insn.opcode->id == PPC_INST_BLELR ||
+             insn.opcode->id == PPC_INST_BGE ||
+             insn.opcode->id == PPC_INST_BGELR ||
+             insn.opcode->id == PPC_INST_BLT ||
+             insn.opcode->id == PPC_INST_BLTLR))
         {
             cr = insn.operands[0];
             if (insn.opcode->operands[1] != 0)
@@ -125,10 +190,10 @@ void ScanTable(const uint32_t* code, size_t base, SwitchTable& table)
                 table.defaultLabel = insn.operands[1];
             }
         }
-        // Handle CMPLWI even if branch not found yet
-        else if (insn.opcode->id == PPC_INST_CMPLWI)
+        // Handle CMPLWI/CMPWI even if branch not found yet
+        else if (insn.opcode->id == PPC_INST_CMPLWI ||
+                 insn.opcode->id == PPC_INST_CMPWI)
         {
-            // Only process if we haven't found labels yet
             if (table.labels.empty())
             {
                 table.r = insn.operands[1];
@@ -136,13 +201,23 @@ void ScanTable(const uint32_t* code, size_t base, SwitchTable& table)
                 table.base = base;
             }
         }
-        // Handle CMPLWI after branch detection
-        else if (cr != -1 &&
-            insn.opcode->id == PPC_INST_CMPLWI &&
-            insn.operands[0] == cr)
+        // Handle CMPLWI/CMPWI after branch detection
+        else if (cr != (uint32_t)-1 &&
+                 (insn.opcode->id == PPC_INST_CMPLWI ||
+                  insn.opcode->id == PPC_INST_CMPWI) &&
+                 insn.operands[0] == cr)
         {
             table.r = insn.operands[1];
             table.labels.resize(insn.operands[2] + 1);
+            table.base = base;
+            break;
+        }
+        // Handle CMPW after branch detection (register compare)
+        else if (cr != (uint32_t)-1 &&
+                 insn.opcode->id == PPC_INST_CMPW &&
+                 insn.operands[0] == cr)
+        {
+            table.r = insn.operands[1];
             table.base = base;
             break;
         }
@@ -206,6 +281,8 @@ int main(int argc, char** argv)
 
     const auto file = LoadFile(argv[1]);
     auto image = Image::ParseImage(file.data(), file.size());
+
+    RegisterFunctionsSearch(image);
 
     auto printTable = [&](const SwitchTable& table)
         {
