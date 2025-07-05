@@ -60,6 +60,7 @@ These instructions describe how to build XenonRecompUnlimited on Windows using V
    - Configure and build the `XenonAnalyse` and `XenonRecomp` targets.
 
 4. **Run the tools**
+   - Prefix all of your commands with `arch -x86_64` to run under Rosetta 2.
    - Use `XenonAnalyse` on `default_patched.xex` to generate a switch table file.
    - Run `XenonRecomp` with your configuration and `XenonUtils/ppc_context.h` to produce C++ code.
 ## About XenonAnalyser
