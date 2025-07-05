@@ -27,16 +27,9 @@ bool DestroyObject(void* obj)
 template<typename T>
 struct be
 {
-    T value;
+    T value{};
 
-    be() : value(0)
-    {
-    }
-
-    be(const T v)
-    {
-        set(v);
-    }
+    be() = default;
 
     static T byteswap(T value)
     {
@@ -245,8 +238,8 @@ typedef struct _XXOVERLAPPED {
     {
         struct
         {
-            be<uint32_t> Error;
-            be<uint32_t> Length;
+            uint32_t Error;
+            uint32_t Length;
         };
 
         struct

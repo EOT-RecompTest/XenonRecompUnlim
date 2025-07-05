@@ -23,9 +23,11 @@ These instructions describe how to build XenonRecompUnlimited on Windows using V
 
 3. **Clone the repository**
 
-   ```cmd
+```cmd
    git clone --recursive https://github.com/EOT-RecompTest/XenonRecomp.git
-   ```
+   cd XenonRecomp
+   git submodule update --init --recursive
+```
 
 4. **Configure the project**
    - Open the repository folder in CMake-GUI as a Source Repository

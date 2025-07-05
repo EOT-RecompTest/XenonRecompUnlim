@@ -89,7 +89,12 @@ void ReadTable(Image& image, SwitchTable& table)
     ppc::Disassemble(code, table.base, insn);
     pOffset = insn.operands[1] << 16;
 
+    // Some compilers insert a nop after the initial LIS, so check for it
     ppc::Disassemble(code + 1, table.base + 4, insn);
+    if (insn.opcode->id == PPC_INST_NOP)
+    {
+        ppc::Disassemble(code + 2, table.base + 8, insn);
+    }
     pOffset += insn.operands[2];
 
     if (table.type == SWITCH_ABSOLUTE)
@@ -165,7 +170,7 @@ void ScanTable(const uint32_t* code, size_t base, SwitchTable& table)
 {
     ppc_insn insn;
     uint32_t cr{ (uint32_t)-1 };
-    for (int i = 0; i < 64; i++)
+    for (int i = 0; i < 32; i++)
     {
         ppc::Disassemble(&code[-i], base - (4 * i), insn);
         if (insn.opcode == nullptr)
@@ -349,6 +354,7 @@ int main(int argc, char** argv)
         PPC_INST_RLWINM,
         PPC_INST_LWZX,
         PPC_INST_MTCTR,
+        PPC_INST_NOP,
         PPC_INST_BCTR,
     };
 
@@ -362,6 +368,7 @@ int main(int argc, char** argv)
         PPC_INST_ADDI,
         PPC_INST_ADD,
         PPC_INST_MTCTR,
+        PPC_INST_NOP,
     };
 
     uint32_t offsetSwitch[] =
@@ -373,6 +380,7 @@ int main(int argc, char** argv)
         PPC_INST_ADDI,
         PPC_INST_ADD,
         PPC_INST_MTCTR,
+        PPC_INST_NOP,
     };
 
     uint32_t wordOffsetSwitch[] =
@@ -385,6 +393,7 @@ int main(int argc, char** argv)
         PPC_INST_ADDI,
         PPC_INST_ADD,
         PPC_INST_MTCTR,
+        PPC_INST_NOP,
     };
 
     println("# ---- ABSOLUTE JUMPTABLE ----");
