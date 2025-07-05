@@ -41,10 +41,10 @@ These instructions describe how to build XenonRecompUnlimited on Windows using V
 
 6. **Analyze and recompile**
       ```bash
-   XenonAnalyse default_patched.xex switch_tables.toml
+   ./XenonAnalyse default_patched.xex switch_tables.toml
    ```
     ```bash
-   XenonRecomp config.toml XenonUtils/ppc_context.h
+   ./XenonRecomp config.toml XenonUtils/ppc_context.h
    ```
    
 ### Quick Start on macOS
