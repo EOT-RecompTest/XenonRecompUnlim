@@ -16,4 +16,10 @@
 #include <xbox.h>
 #include <xxhash.h>
 #include <fmt/core.h>
-#include <xmmintrin.h>
+#if defined(__x86_64__) || defined(_M_X64) || defined(_M_IX86)
+#  include <x86intrin.h>
+#else
+#  define SIMDE_ENABLE_NATIVE_ALIASES
+#  include <simde/x86/xmmintrin.h>
+#  include <simde/x86/smmintrin.h>
+#endif

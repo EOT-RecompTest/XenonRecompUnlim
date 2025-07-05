@@ -11,11 +11,12 @@ add_executable(XenonRecomp
 target_precompile_headers(XenonRecomp PUBLIC "pch.h")
 
 target_link_libraries(XenonRecomp PRIVATE
-    LibXenonAnalyse 
-    XenonUtils 
+    LibXenonAnalyse
+    XenonUtils
     fmt::fmt
-    tomlplusplus::tomlplusplus 
-    xxHash::xxhash)
+    tomlplusplus::tomlplusplus
+    xxHash::xxhash
+    simde)
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(XenonRecomp PRIVATE -Wno-switch -Wno-unused-variable -Wno-null-arithmetic)
@@ -26,4 +27,6 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     endif()
 endif()
 
-target_compile_definitions(XenonRecomp PRIVATE _CRT_SECURE_NO_WARNINGS)
+target_compile_definitions(XenonRecomp PRIVATE
+    _CRT_SECURE_NO_WARNINGS
+    SIMDE_ENABLE_NATIVE_ALIASES)

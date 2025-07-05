@@ -11,3 +11,6 @@ endif()
 if (NOT TARGET xxHash::xxhash)
     add_subdirectory(${THIRDPARTY_ROOT}/xxHash/cmake_unofficial)
 endif()
+
+add_library(simde INTERFACE)
+target_include_directories(simde INTERFACE ${THIRDPARTY_ROOT}/simde)

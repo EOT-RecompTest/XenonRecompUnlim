@@ -14,6 +14,7 @@ add_library(XenonUtils
 target_compile_definitions(XenonUtils
     PRIVATE
         NOMINMAX
+        SIMDE_ENABLE_NATIVE_ALIASES
 )
 
 target_include_directories(XenonUtils 
@@ -25,7 +26,9 @@ target_include_directories(XenonUtils
         "${THIRDPARTY_ROOT}/TinySHA1"
 )
 
-target_link_libraries(XenonUtils 
+target_link_libraries(XenonUtils
     PUBLIC
         disasm
+    PRIVATE
+        simde
 )

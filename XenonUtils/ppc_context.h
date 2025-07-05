@@ -12,13 +12,15 @@
 #include <cstdlib>
 #include <cstring>
 
-#include <x86intrin.h>
-
-#ifdef _WIN32
-#include <intrin.h>
+#if defined(__x86_64__) || defined(_M_X64) || defined(_M_IX86)
+#  include <x86intrin.h>
+#  ifdef _WIN32
+#    include <intrin.h>
+#  endif
 #else
-#include <xmmintrin.h>
-#include <smmintrin.h>
+#  define SIMDE_ENABLE_NATIVE_ALIASES
+#  include <simde/x86/xmmintrin.h>
+#  include <simde/x86/smmintrin.h>
 #endif
 
 #define PPC_JOIN(x, y) x##y
