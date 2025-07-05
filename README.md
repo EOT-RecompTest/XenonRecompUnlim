@@ -6,37 +6,60 @@ XenonRecompUnlimited - it's special fork of XenonRecomp for EOT, like experiment
 Some  new commands of PowerPC CPU checked, but other experimental
 
 ### Quick Start
-
 These instructions describe how to build XenonRecompUnlimited on Windows using Visual Studio 2022.
 
-1. **Install dependencies**
+1. **Prepare your game files**
+   - Extract the game ISO using [Iso Extract](https://www.filehorse.com/download-xbox-360-iso-extract/?utm_source=chatgpt.com).
+   - Decrypt, uncompress and apply updates with [xextool](https://digiex.net/threads/xextool-6-3-download.9523/):
+     ```cmd
+     xextool -eu -cu -p default.xexp -o default_patched.xex default.xex
+     ```
+   - Keep `default_patched.xex` for analysis.
+
+2. **Install dependencies**
    - [Git](https://git-scm.com/downloads/win)
    - [Visual Studio 2022](https://visualstudio.microsoft.com/vs/) with the "Desktop development with C++" workload and the `clang-cl` component
    - [CMake 3.20 or later](https://cmake.org/download/)
 
-2. **Clone the repository**
+3. **Clone the repository**
 
    ```cmd
    git clone --recursive https://github.com/EOT-RecompTest/XenonRecomp.git
    ```
 
-3. **Configure the project**
+4. **Configure the project**
    - Open the repository folder in CMake-GUI as a Source Repository
    - Create a build folder in the repository, and select that as the build folder in CMake-GUI
    - Click **Configure**
    - Select `ClangCL` as the toolchain and `x64` as the target architecture
    - Go through the configuration and once complete, Click **Build**
 
-4. **Run Visual Studio**
-   - Press the generated sln file in your build folder
-   - Click **Build** >> **Build All** (Heading bar) in Visual Studio
-   - This builds `XenonAnalyse` and `XenonRecomp` executables in build/Xenon_____/Release folders
+5. **Run Visual Studio**
+   - Open the generated sln file in your build folder
+   - Click **Build** >> **Build All** in Visual Studio
+   - This builds `XenonAnalyse` and `XenonRecomp` executables in the build directories
 
-5. **Prepare a game XEX**
-   - Extract the game ISO using the [XGDTool](https://github.com/wiredopposite/XGDTool/releases/tag/v1.0.0) GUI.
-   - Decompress and decrypt the XEX with [xextool](https://digiex.net/threads/xextool-6-3-download.9523/).
+6. **Analyze and recompile**
+   - Run `XenonAnalyse default_patched.xex switch_tables.toml` to generate jump table definitions.
+   - Run `XenonRecomp config.toml XenonUtils/ppc_context.h` to produce C++ output.
 
+### Quick Start on macOS
+
+1. **Install dependencies**
+   - Install [Homebrew](https://brew.sh/) and then `brew install llvm cmake`.
+   - Install [CLion](https://www.jetbrains.com/clion/) or another CMake IDE.
+
+2. **Clone the repository** (same as Windows).
+
+3. **Open the project in CLion**
+   - Set the CMake profile to use `-DCMAKE_OSX_ARCHITECTURES=x86_64`.
+   - Configure and build the `XenonAnalyse` and `XenonRecomp` targets.
+
+4. **Run the tools**
+   - Use `XenonAnalyse` on `default_patched.xex` to generate a switch table file.
+   - Run `XenonRecomp` with your configuration and `XenonUtils/ppc_context.h` to produce C++ code.
 ## About XenonAnalyser
+
 
 Some games have different .xex properties, for example some games contain setjmp and longjmp (can be necessary offset), but other don't;
 
@@ -160,6 +183,10 @@ Additionally, mid-asm hooks can be inserted directly into the translated C++ cod
 
 ## Usage
 
+After building the tools you can follow this basic workflow:
+1. Run `XenonAnalyse` on your patched XEX to create a jump table TOML file.
+2. Edit or create a recompiler configuration referencing this file.
+3. Run `XenonRecomp` with your configuration and `XenonUtils/ppc_context.h` to generate the C++ sources.
 ### XenonAnalyse
 
 XenonAnalyse, when used as a command-line application, allows an XEX file to be passed as an input argument to output a TOML file containing all the detected jump tables in the executable:
